@@ -7512,6 +7512,12 @@ import org.springframework.cloud.gcp.data.firestore.Document;
 
 @Document(collectionName = "usersCollection")
 public class User {
+    /**
+     * Used to test @PropertyName annotation on a field.
+     */
+    @PropertyName("drink")
+    public String favoriteDrink;
+
     @DocumentId
     private String name;
 
@@ -7571,6 +7577,12 @@ They are stored as embedded documents (or arrays, correspondingly) in the Cloud 
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Document(collectionName = "usersCollection")
 public class User {
+    /**
+     * Used to test @PropertyName annotation on a field.
+     */
+    @PropertyName("drink")
+    public String favoriteDrink;
+
     @DocumentId
     private String name;
 
@@ -7598,10 +7610,12 @@ public class User {
         this.addresses = addresses;
     }
 
+    @PropertyName("address")
     public Address getHomeAddress() {
         return this.homeAddress;
     }
 
+    @PropertyName("address")
     public void setHomeAddress(Address homeAddress) {
         this.homeAddress = homeAddress;
     }
@@ -7631,6 +7645,10 @@ public class User {
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public interface UserRepository extends FirestoreReactiveRepository&lt;User&gt; {
     Flux&lt;User&gt; findByAge(Integer age);
 
+    Flux&lt;User&gt; findByHomeAddressCountry(String country);
+
+    Flux&lt;User&gt; findByFavoriteDrink(String drink);
+
     Flux&lt;User&gt; findByAgeGreaterThanAndAgeLessThan(Integer age1, Integer age2);
 
     Flux&lt;User&gt; findByAgeGreaterThan(Integer age);
@@ -7654,6 +7672,18 @@ public class User {
 </div>
 <div class="paragraph">
 <p>The <code>User</code> type parameter to <code>FirestoreReactiveRepository</code> refers to the underlying domain type.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You can refer to nested fields using <a href="https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#repositories.query-methods.query-property-expressions">Spring Data JPA Property Expressions</a>
+</td>
+</tr>
+</table>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -7705,14 +7735,18 @@ Custom queries with <code>@Query</code> annotation are not supported since there
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class MyApplication {
     public void partTreeRepositoryMethodTest() {
-        User u1 = new User("Cloud", 22);
-        User u2 = new User("Squall", 17);
+        User u1 = new User("Cloud", 22, null, null, new Address("1 First st., NYC", "USA"));
+        u1.favoriteDrink = "tea";
+        User u2 = new User("Squall", 17, null, null, new Address("2 Second st., London", "UK"));
+        u2.favoriteDrink = "wine";
         Flux&lt;User&gt; users = Flux.fromArray(new User[] {u1, u2});
 
         this.userRepository.saveAll(users).blockLast();
 
         assertThat(this.userRepository.count().block()).isEqualTo(2);
         assertThat(this.userRepository.findByAge(22).collectList().block()).containsExactly(u1);
+        assertThat(this.userRepository.findByHomeAddressCountry("USA").collectList().block()).containsExactly(u1);
+        assertThat(this.userRepository.findByFavoriteDrink("wine").collectList().block()).containsExactly(u2);
         assertThat(this.userRepository.findByAgeGreaterThanAndAgeLessThan(20, 30).collectList().block())
                 .containsExactly(u1);
         assertThat(this.userRepository.findByAgeGreaterThan(10).collectList().block()).containsExactlyInAnyOrder(u1,
