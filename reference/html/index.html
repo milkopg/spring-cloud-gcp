@@ -8859,7 +8859,7 @@ A detailed summary of its features can be found in the <a href="https://cloud.go
 <div class="ulist">
 <ul>
 <li>
-<p>A Spring Boot starter which automatically loads the secrets of your GCP project into your application context as a <a href="https://cloud.spring.io/spring-cloud-commons/multi/multi__spring_cloud_context_application_context_services.html#_the_bootstrap_application_context">Bootstrap Property Source</a>.</p>
+<p>A property source which allows you to specify and load the secrets of your GCP project into your application context as a <a href="https://cloud.spring.io/spring-cloud-commons/multi/multi__spring_cloud_context_application_context_services.html#_the_bootstrap_application_context">Bootstrap Property Source</a>.</p>
 </li>
 <li>
 <p>A <code>SecretManagerTemplate</code> which allows you to read, write, and update secrets in Secret Manager.</p>
@@ -8892,39 +8892,11 @@ A detailed summary of its features can be found in the <a href="https://cloud.go
 }</code></pre>
 </div>
 </div>
-</div>
-<div class="sect2">
-<h3 id="secret-manager-property-source"><a class="anchor" href="#secret-manager-property-source"></a><a class="link" href="#secret-manager-property-source">19.2. Secret Manager Property Source</a></h3>
-<div class="paragraph">
-<p>The Spring Cloud GCP integration for Google Cloud Secret Manager enables you to use Secret Manager as a bootstrap property source.</p>
-</div>
-<div class="paragraph">
-<p>This feature allows you to automatically load your GCP project&#8217;s secrets as properties into the application context during the <a href="https://cloud.spring.io/spring-cloud-commons/reference/html/#the-bootstrap-application-context">Bootstrap Phase</a>, which refers to the initial phase when a Spring application is being loaded.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This feature disabled by default; to use it, you must set <code>spring.cloud.gcp.secretmanager.bootstrap.enabled</code> to <strong>true</strong> in your <code>bootstrap.properties</code> file.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Spring Cloud GCP will load the <strong>latest</strong> version of each secret into the application context.</p>
-</div>
-<div class="paragraph">
-<p>All secrets will be loaded into the application environment using their <code>secretId</code> as the property name.
-For example, if your secret&#8217;s id is <code>my-secret</code> then it will be accessible as a property using the name <code>my-secret</code>.
-If you would like to append a prefix string to all property names imported from Secret Manager, you may use the <code>spring.cloud.gcp.secretmanager.secret-name-prefix</code> setting described below.</p>
-</div>
 <div class="sect3">
-<h4 id="configuration-bootstrap"><a class="anchor" href="#configuration-bootstrap"></a><a class="link" href="#configuration-bootstrap">19.2.1. Configuration (Bootstrap)</a></h4>
+<h4 id="configuration-10"><a class="anchor" href="#configuration-10"></a><a class="link" href="#configuration-10">19.1.1. Configuration</a></h4>
 <div class="paragraph">
-<p>Spring Cloud GCP Secret Manager offers several bootstrap configuration properties to customize the behavior.</p>
+<p>By default, Spring Cloud GCP Secret Manager will authenticate using Application Default Credentials.
+This can be overridden using the authentication properties.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -8953,28 +8925,90 @@ All of the below settings must be specified in a <a href="https://cloud.spring.i
 <td class="tableblock halign-left valign-top"><p class="tableblock">Default value</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.bootstrap.enabled</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enables loading secrets from Secret Manager as a bootstrap property source. Set this to <strong>true</strong> to enable the feature.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables the Secret Manager bootstrap property and template configuration.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.secret-name-prefix</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A prefix string to prepend to the property names of secrets read from Secret Manager</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.credentials.location</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OAuth2 credentials for authenticating to the Google Cloud Secret Manager API.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">"" (empty string)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">By default, infers credentials from <a href="https://cloud.google.com/docs/authentication/production">Application Default Credentials</a>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.versions.&lt;secret-id&gt;</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Defines a version for a specific secret-id to read from Secret Manager instead of using the latest version.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.credentials.encoded-key</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Base64-encoded contents of OAuth2 account private key for authenticating to the Google Cloud Secret Manager API.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">"" (empty string)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">By default, infers credentials from <a href="https://cloud.google.com/docs/authentication/production">Application Default Credentials</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.project-id</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The default GCP Project used to access Secret Manager API for the template and property source.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">By default, infers the project from <a href="https://cloud.google.com/docs/authentication/production">Application Default Credentials</a>.</p></td>
 </tr>
 </tbody>
 </table>
-<div class="paragraph">
-<p>See the Authentication Settings section below for information on how to set properties to authenticate to Secret Manager.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="secret-manager-property-source"><a class="anchor" href="#secret-manager-property-source"></a><a class="link" href="#secret-manager-property-source">19.2. Secret Manager Property Source</a></h3>
+<div class="paragraph">
+<p>The Spring Cloud GCP integration for Google Cloud Secret Manager enables you to use Secret Manager as a bootstrap property source.</p>
+</div>
+<div class="paragraph">
+<p>This allows you to specify and load secrets from Google Cloud Secret Manager as properties into the application context during the <a href="https://cloud.spring.io/spring-cloud-commons/reference/html/#the-bootstrap-application-context">Bootstrap Phase</a>, which refers to the initial phase when a Spring application is being loaded.</p>
+</div>
+<div class="paragraph">
+<p>The Secret Manager property source uses the following syntax to specify secrets:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code># 1. Long form - specify the project ID, secret ID, and version
+sm://projects/&lt;project-id&gt;/secrets/&lt;secret-id&gt;/versions/&lt;version-id&gt;}
+
+# 2.  Long form - specify project ID, secret ID, and use latest version
+sm://projects/&lt;project-id&gt;/secrets/&lt;secret-id&gt;
+
+# 3. Short form - specify project ID, secret ID, and version
+sm://&lt;project-id&gt;/&lt;secret-id&gt;/&lt;version-id&gt;
+
+# 4. Short form - default project; specify secret + version
+#
+# The project is inferred from the spring.cloud.gcp.secretmanager.project-id setting
+# in your bootstrap.properties (see Configuration) or from application-default credentials if
+# this is not set.
+sm://&lt;secret-id&gt;/&lt;version&gt;
+
+# 5. Shortest form - specify secret ID, use default project and latest version.
+sm://&lt;secret-id&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can use this syntax in the following places:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In your <code>application.properties</code> or <code>bootstrap.properties</code> files:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code># Example of the project-secret long-form syntax.
+spring.datasource.password=${sm://projects/my-gcp-project/secrets/my-secret}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the value using the <code>@Value</code> annotation.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>// Example of using shortest form syntax.
+@Value("${sm://my-secret}")</code></pre>
+</div>
+</div>
+</li>
+</ol>
 </div>
 </div>
 <div class="sect2">
@@ -8993,54 +9027,6 @@ private SecretManagerTemplate secretManagerTemplate;</code></pre>
 </div>
 <div class="paragraph">
 <p>Please consult <a href="https://github.com/spring-cloud/spring-cloud-gcp/blob/master/spring-cloud-gcp-secretmanager/src/main/java/org/springframework/cloud/gcp/secretmanager/SecretManagerOperations.java"><code>SecretManagerOperations</code></a> for information on what operations are available for the Secret Manager template.</p>
-</div>
-<div class="sect3">
-<h4 id="configuration-10"><a class="anchor" href="#configuration-10"></a><a class="link" href="#configuration-10">19.3.1. Configuration</a></h4>
-<div class="paragraph">
-<p>The auto-configured <code>SecretManagerTemplate</code> bean can be customized using configuration properties.
-By default, Spring Cloud GCP Secret Manager will authenticate using Application Default Credentials.
-This can be overridden using the authentication properties.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Required</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Default value</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.enabled</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Enables the autowiring of the <code>SecretManagerTemplate</code> in the application context.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.credentials.location</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">OAuth2 credentials for authenticating to the Google Cloud Secret Manager API.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">By default, infers credentials from <a href="https://cloud.google.com/docs/authentication/production">Application Default Credentials</a>.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.credentials.encoded-key</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Base64-encoded contents of OAuth2 account private key for authenticating to the Google Cloud Secret Manager API.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">By default, infers credentials from <a href="https://cloud.google.com/docs/authentication/production">Application Default Credentials</a>.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.project-id</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The GCP Project used to access Secret Manager API.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">By default, infers the project from <a href="https://cloud.google.com/docs/authentication/production">Application Default Credentials</a>.</p></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 <div class="sect2">
