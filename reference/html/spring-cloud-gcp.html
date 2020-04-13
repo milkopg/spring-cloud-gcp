@@ -202,7 +202,8 @@ $(addBlockSwitches);
 <li><a href="#events">12.7. Events</a></li>
 <li><a href="#auditing">12.8. Auditing</a></li>
 <li><a href="#multi-instance-usage">12.9. Multi-Instance Usage</a></li>
-<li><a href="#sample-8">12.10. Sample</a></li>
+<li><a href="#cloud-spanner-emulator">12.10. Cloud Spanner Emulator</a></li>
+<li><a href="#sample-8">12.11. Sample</a></li>
 </ul>
 </li>
 <li><a href="#spring-data-cloud-datastore">13. Spring Data Cloud Datastore</a>
@@ -5437,7 +5438,32 @@ By providing a custom implementation of this bean (for example, supplying a thre
 </div>
 </div>
 <div class="sect2">
-<h3 id="sample-8"><a class="anchor" href="#sample-8"></a><a class="link" href="#sample-8">12.10. Sample</a></h3>
+<h3 id="cloud-spanner-emulator"><a class="anchor" href="#cloud-spanner-emulator"></a><a class="link" href="#cloud-spanner-emulator">12.10. Cloud Spanner Emulator</a></h3>
+<div class="paragraph">
+<p>The <a href="https://cloud.google.com/sdk">Cloud SDK</a> provides a local, in-memory emulator for Cloud Spanner, which you can use to develop and test your application. As the emulator stores data only in memory, it will not persist data across runs. It is intended to help you use Cloud Spanner for local development and testing, not for production deployments.</p>
+</div>
+<div class="paragraph">
+<p>In order to set up and start the emulator, you can follow <a href="https://cloud.google.com/spanner/docs/emulator">these steps</a>.</p>
+</div>
+<div class="paragraph">
+<p>This command can be used to create Cloud Spanner instances:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ gcloud spanner instances create &lt;instance-name&gt; --config=emulator-config --description="&lt;description&gt;" --nodes=1</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Remember that you need to set the <code>SPANNER_EMULATOR_HOST</code> environment variable to use the emulator:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ export SPANNER_EMULATOR_HOST=localhost:9010</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sample-8"><a class="anchor" href="#sample-8"></a><a class="link" href="#sample-8">12.11. Sample</a></h3>
 <div class="paragraph">
 <p>A <a href="https://github.com/spring-cloud/spring-cloud-gcp/tree/master/spring-cloud-gcp-samples/spring-cloud-gcp-data-spanner-sample">sample application</a> is available.</p>
 </div>
